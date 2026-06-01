@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Explore, pesquise e copie cores em RGB e HEX." />
+  <title>RGB Colors</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="hero">
+    <nav class="topbar" aria-label="Menu principal">
+      <a class="brand" href="#top" aria-label="RGB Colors início">
+        <span class="brand-mark"></span>
+        <span>RGB Colors</span>
+      </a>
+      <div class="nav-links">
+        <a href="#explorar">Explorar</a>
+        <a href="#gerador">Gerador</a>
+        <a href="#todas">Todas RGB</a>
+      </div>
+    </nav>
+
+    <section id="top" class="hero-content">
+      <p class="eyebrow">Cores em RGB prontas para copiar</p>
+      <h1>Veja cores, pesquise tons e copie valores RGB em um toque.</h1>
+      <p class="hero-text">
+        Um site original para consultar cores famosas, gerar qualquer cor RGB e navegar pelas 16.777.216 combinações possíveis sem travar o navegador.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="#explorar">Começar</a>
+        <a class="button ghost" href="#todas">Ver todas RGB</a>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section id="explorar" class="section">
+      <div class="section-heading">
+        <p class="eyebrow">Explorar</p>
+        <h2>Cores populares</h2>
+        <p>Pesquise por nome, RGB ou HEX. Clique em copiar para salvar o valor RGB.</p>
+      </div>
+
+      <div class="toolbar">
+        <label class="search-box">
+          <span>Pesquisar cor</span>
+          <input id="searchInput" type="search" placeholder="Ex: red, azul, rgb(255, 0, 0), #ff0000" autocomplete="off" />
+        </label>
+
+        <label class="select-box">
+          <span>Categoria</span>
+          <select id="categorySelect">
+            <option value="all">Todas</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="popularGrid" class="color-grid" aria-live="polite"></div>
+      <p id="emptyMessage" class="empty-message" hidden>Nenhuma cor encontrada.</p>
+    </section>
+
+    <section id="gerador" class="section generator-section">
+      <div class="section-heading">
+        <p class="eyebrow">Gerador</p>
+        <h2>Monte sua própria cor RGB</h2>
+        <p>Use os controles abaixo para criar qualquer cor e copiar o resultado.</p>
+      </div>
+
+      <div class="generator-card">
+        <div id="previewBox" class="preview-box" aria-label="Prévia da cor gerada"></div>
+
+        <div class="sliders">
+          <label>
+            <span>R <strong id="redValue">120</strong></span>
+            <input id="redRange" type="range" min="0" max="255" value="120" />
+          </label>
+          <label>
+            <span>G <strong id="greenValue">80</strong></span>
+            <input id="greenRange" type="range" min="0" max="255" value="80" />
+          </label>
+          <label>
+            <span>B <strong id="blueValue">220</strong></span>
+            <input id="blueRange" type="range" min="0" max="255" value="220" />
+          </label>
+        </div>
+
+        <div class="generated-values">
+          <button id="rgbCopyButton" class="copy-value" type="button">rgb(120, 80, 220)</button>
+          <button id="hexCopyButton" class="copy-value" type="button">#7850DC</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="todas" class="section">
+      <div class="section-heading">
+        <p class="eyebrow">Todas as cores RGB</p>
+        <h2>Navegue por páginas leves</h2>
+        <p>
+          RGB possui 16.777.216 cores. Para o site não ficar pesado, esta área mostra 256 cores por página.
+        </p>
+      </div>
+
+      <div class="rgb-browser">
+        <div class="browser-controls">
+          <label>
+            <span>Canal R</span>
+            <input id="pageRed" type="number" min="0" max="255" value="0" />
+          </label>
+          <label>
+            <span>Canal G</span>
+            <input id="pageGreen" type="number" min="0" max="255" value="0" />
+          </label>
+          <div class="control-buttons">
+            <button id="previousPage" class="button ghost small" type="button">Anterior</button>
+            <button id="nextPage" class="button primary small" type="button">Próxima</button>
+          </div>
+        </div>
+        <p id="pageInfo" class="page-info"></p>
+        <div id="allRgbGrid" class="mini-grid" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">Copiado!</div>
+
+  <footer class="footer">
+    <p>Feito para consultar e copiar cores RGB rapidamente.</p>
+  </footer>
+
+  <script src="colors.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
