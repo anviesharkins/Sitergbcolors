@@ -1,96 +1,74 @@
-const colorGrid = document.querySelector('#colorGrid');
-const emptyMessage = document.querySelector('#emptyMessage');
-const searchInput = document.querySelector('#searchInput');
-const categoryFilters = document.querySelector('#categoryFilters');
-const resultTitle = document.querySelector('#resultTitle');
-const resultCount = document.querySelector('#resultCount');
+const palette = document.querySelector('#palette');
 const toast = document.querySelector('#toast');
 
-let activeCategory = 'Todas';
-
-function rgbToString(rgb) {
+function rgbToText(rgb) {
   return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
 }
 
 function copyText(text) {
   navigator.clipboard.writeText(text).then(() => {
-    showToast(`${text} copiado`);
+    showToast(text);
   }).catch(() => {
-    const helper = document.createElement('textarea');
-    helper.value = text;
-    document.body.appendChild(helper);
-    helper.select();
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
     document.execCommand('copy');
-    helper.remove();
-    showToast(`${text} copiado`);
+    textarea.remove();
+    showToast(text);
   });
 }
 
-function showToast(message) {
-  toast.textContent = message;
+function showToast(text) {
+  toast.textContent = `${text} copiado`;
   toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 1400);
+  setTimeout(() => toast.classList.remove('show'), 1300);
 }
 
-function createCategoryButton(category) {
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.textContent = category;
-  button.className = category === activeCategory ? 'filter active' : 'filter';
-  button.addEventListener('click', () => {
-    activeCategory = category;
-    renderFilters();
-    renderColors();
-  });
-  return button;
-}
-
-function renderFilters() {
-  const categories = ['Todas', ...new Set(COLORS.map((color) => color.category))];
-  categoryFilters.innerHTML = '';
-  categories.forEach((category) => categoryFilters.appendChild(createCategoryButton(category)));
+function groupColors() {
+  return COLORS.reduce((groups, color) => {
+    if (!groups[color.category]) groups[color.category] = [];
+    groups[color.category].push(color);
+    return groups;
+  }, {});
 }
 
 function createColorCard(color) {
-  const rgb = rgbToString(color.rgb);
+  const rgb = rgbToText(color.rgb);
   const card = document.createElement('article');
   card.className = 'color-card';
   card.innerHTML = `
-    <button class="swatch" type="button" style="background:${rgb}" data-copy="${rgb}" aria-label="Copiar ${rgb}"></button>
-    <div class="info">
-      <div>
-        <h3>${color.pt}</h3>
-        <p>${color.name}</p>
-      </div>
-      <button class="value" type="button" data-copy="${rgb}">${rgb}</button>
-      <button class="value hex" type="button" data-copy="${color.hex}">${color.hex}</button>
+    <button class="color-preview" type="button" data-copy="${rgb}" style="background:${rgb}" aria-label="Copiar ${rgb}"></button>
+    <div class="color-content">
+      <h3>${color.pt}</h3>
+      <p>${color.name}</p>
+      <button class="rgb-button" type="button" data-copy="${rgb}">${rgb}</button>
+      <span>${color.hex}</span>
     </div>
   `;
   return card;
 }
 
-function renderColors() {
-  const term = searchInput.value.trim().toLowerCase();
+function renderPalette() {
+  const groups = groupColors();
+  palette.innerHTML = '';
 
-  const filtered = COLORS.filter((color) => {
-    const rgb = rgbToString(color.rgb).toLowerCase();
-    const matchesCategory = activeCategory === 'Todas' || color.category === activeCategory;
-    const matchesSearch = !term ||
-      color.pt.toLowerCase().includes(term) ||
-      color.name.toLowerCase().includes(term) ||
-      color.category.toLowerCase().includes(term) ||
-      color.hex.toLowerCase().includes(term) ||
-      rgb.includes(term);
+  Object.entries(groups).forEach(([category, colors]) => {
+    const section = document.createElement('section');
+    section.className = 'tone-section';
 
-    return matchesCategory && matchesSearch;
+    const header = document.createElement('div');
+    header.className = 'tone-header';
+    header.innerHTML = `<h2>${category}</h2><p>${colors.length} tons</p>`;
+
+    const grid = document.createElement('div');
+    grid.className = 'color-grid';
+    colors.forEach((color) => grid.appendChild(createColorCard(color)));
+
+    section.appendChild(header);
+    section.appendChild(grid);
+    palette.appendChild(section);
   });
-
-  colorGrid.innerHTML = '';
-  filtered.forEach((color) => colorGrid.appendChild(createColorCard(color)));
-
-  resultTitle.textContent = activeCategory === 'Todas' ? 'Todas as cores' : activeCategory;
-  resultCount.textContent = `${filtered.length} ${filtered.length === 1 ? 'cor encontrada' : 'cores encontradas'}`;
-  emptyMessage.hidden = filtered.length > 0;
 }
 
 document.body.addEventListener('click', (event) => {
@@ -98,7 +76,4 @@ document.body.addEventListener('click', (event) => {
   if (target) copyText(target.dataset.copy);
 });
 
-searchInput.addEventListener('input', renderColors);
-
-renderFilters();
-renderColors();
+renderPalette();
